@@ -60,6 +60,7 @@ module "subnet"{
   vnet_name = "${module.vnet.vnet_name}"
   resource_group_name = "${var.AppName}_Network_RG"
   NSG_RG_name = "${var.AppName}_NSG_RG"
+  allow_rdp_traffic = "true"
   location = "${var.location}"
   subnet_prefixes = ["${var.subnet_prefixes}"]
   subnet_names = ["MGMT_App_Subnet"]
