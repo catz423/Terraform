@@ -164,26 +164,29 @@ resource "azurerm_virtual_machine" "vm-windows" {
   tags = "${var.tags}"
 }
 
-resource "azurerm_virtual_machine_extension" "dsc" {
- count                = "${contains(list("${var.vm_os_simple}","${var.vm_os_offer}"), "WindowsServer") ? var.nb_instances : 0}"
- name                 = "${var.vm_hostname}${count.index}"
- location             = "${var.location}"
- resource_group_name  = "${azurerm_resource_group.vm.name}"
- virtual_machine_name = "${var.vm_hostname}${count.index}"
- publisher            = "Microsoft.Powershell"
- type                 = "DSC"
- type_handler_version = "2.71"
+#Add Azure Automation DSC Extension - Still in progress
+# resource "azurerm_virtual_machine_extension" "dsc" {
+#  count                = "${contains(list("${var.vm_os_simple}","${var.vm_os_offer}"), "WindowsServer") ? var.nb_instances : 0}"
+#  name                 = "${var.vm_hostname}${count.index}"
+#  location             = "${var.location}"
+#  resource_group_name  = "${azurerm_resource_group.vm.name}"
+#  virtual_machine_name = "${var.vm_hostname}${count.index}"
+#  publisher            = "Microsoft.Powershell"
+#  type                 = "DSC"
+#  type_handler_version = "2.73"
 
- settings = <<SETTINGS
-   {
-       "configuration": {
-           "registrationKey": "Ldi85cfGsUUIi4ZoivearrV74Rt5sJsYpur4rgf01U+fgcHsxbF4zYQX4vPM+c9pwZA3s76VzDmxXomwe7XXJA==",
-           "registrationUrl": "https://scus-agentservice-prod-1.azure-automation.net/accounts/ab34e2f6-07a3-4bec-8a22-4e351014c7bd",
-           "ConfigurationNames": "FileResource.locahost"
-       }
-   }
-SETTINGS
-}
+#  settings = <<SETTINGS
+#    {
+#        "configuration": {
+#            "registrationKey": "Ldi85cfGsUUIi4ZoivearrV74Rt5sJsYpur4rgf01U+fgcHsxbF4zYQX4vPM+c9pwZA3s76VzDmxXomwe7XXJA==",
+#            "registrationUrl": "https://scus-agentservice-prod-1.azure-automation.net/accounts/ab34e2f6-07a3-4bec-8a22-4e351014c7bd",
+#            "NodeConfigurationName": "FileResource.locahost",
+#            "ConfigurationMode": "ApplyAndAutoCorrect",
+#            "ActionAfterReboot": "ContinueConfiguration"
+#        }
+#    }
+# SETTINGS
+# }
 
 resource "azurerm_virtual_machine" "vm-windows-with-datadisk" {
   count                         = "${contains(list("${var.vm_os_simple}","${var.vm_os_offer}"), "WindowsServer") && var.data_disk == "true" ? var.nb_instances : 0}"
