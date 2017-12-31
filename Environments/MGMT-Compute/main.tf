@@ -68,7 +68,7 @@ module "WindowsVMs"{
   #ssh_key = ""
   remote_port = "3389"
   #storage_account_type = ""
-  vm_size = "Standard_DS2"
+  vm_size = "Standard_DS1"
   nb_instances = "2"
   vm_hostname = "${var.vm_hostname}"
   vm_os_publisher = "MicrosoftWindowsServer"
