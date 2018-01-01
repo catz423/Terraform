@@ -165,7 +165,6 @@ resource "azurerm_virtual_machine" "vm-windows" {
 
   #Onboard VMs to DSC Configuration
     provisioner "local-exec" {
-        #command = "./OnboardVM.ps1 -AzureVMRGName \"${azurerm_resource_group.vm.name}\" -computerName \"${var.vm_hostname}${count.index}\" -NodeConfig \"FileResource.locahost\""
         command = "../../Modules/Azure/DSC/OnboardVM.ps1 -AzureVMRGName \"${azurerm_resource_group.vm.name}\" -computerName \"${var.vm_hostname}${count.index}\" -NodeConfig \"${var.DSC_Node_Configuration}\""
         interpreter = ["PowerShell", "-Command"]
     }
