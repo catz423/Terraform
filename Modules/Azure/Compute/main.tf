@@ -162,28 +162,35 @@ resource "azurerm_virtual_machine" "vm-windows" {
     admin_password = "${var.admin_password}"
   }
   tags = "${var.tags}"
+
+  #Onboard VMs to DSC Configuration
+    provisioner "local-exec" {
+        #command = "./OnboardVM.ps1 -AzureVMRGName \"${azurerm_resource_group.vm.name}\" -computerName \"${var.vm_hostname}${count.index}\" -NodeConfig \"FileResource.locahost\""
+        command = "../../Modules/Azure/DSC/OnboardVM.ps1 -AzureVMRGName \"${azurerm_resource_group.vm.name}\" -computerName \"${var.vm_hostname}${count.index}\" -NodeConfig \"${var.DSC_Node_Configuration}\""
+        interpreter = ["PowerShell", "-Command"]
+    }
 }
 
-resource "azurerm_virtual_machine_extension" "dsc" {
- count                = "${contains(list("${var.vm_os_simple}","${var.vm_os_offer}"), "WindowsServer") ? var.nb_instances : 0}"
- name                 = "${var.vm_hostname}${count.index}"
- location             = "${var.location}"
- resource_group_name  = "${azurerm_resource_group.vm.name}"
- virtual_machine_name = "${var.vm_hostname}${count.index}"
- publisher            = "Microsoft.Powershell"
- type                 = "DSC"
- type_handler_version = "2.71"
+# resource "azurerm_virtual_machine_extension" "dsc" {
+#  count                = "${contains(list("${var.vm_os_simple}","${var.vm_os_offer}"), "WindowsServer") ? var.nb_instances : 0}"
+#  name                 = "${var.vm_hostname}${count.index}"
+#  location             = "${var.location}"
+#  resource_group_name  = "${azurerm_resource_group.vm.name}"
+#  virtual_machine_name = "${var.vm_hostname}${count.index}"
+#  publisher            = "Microsoft.Powershell"
+#  type                 = "DSC"
+#  type_handler_version = "2.71"
 
- settings = <<SETTINGS
-   {
-       "configuration": {
-           "registrationKey": "Ldi85cfGsUUIi4ZoivearrV74Rt5sJsYpur4rgf01U+fgcHsxbF4zYQX4vPM+c9pwZA3s76VzDmxXomwe7XXJA==",
-           "registrationUrl": "https://scus-agentservice-prod-1.azure-automation.net/accounts/ab34e2f6-07a3-4bec-8a22-4e351014c7bd",
-           "ConfigurationNames": "FileResource.locahost"
-       }
-   }
-SETTINGS
-}
+#  settings = <<SETTINGS
+#    {
+#        "configuration": {
+#            "registrationKey": "Ldi85cfGsUUIi4ZoivearrV74Rt5sJsYpur4rgf01U+fgcHsxbF4zYQX4vPM+c9pwZA3s76VzDmxXomwe7XXJA==",
+#            "registrationUrl": "https://scus-agentservice-prod-1.azure-automation.net/accounts/ab34e2f6-07a3-4bec-8a22-4e351014c7bd",
+#            "ConfigurationNames": "FileResource.locahost"
+#        }
+#    }
+# SETTINGS
+# }
 
 resource "azurerm_virtual_machine" "vm-windows-with-datadisk" {
   count                         = "${contains(list("${var.vm_os_simple}","${var.vm_os_offer}"), "WindowsServer") && var.data_disk == "true" ? var.nb_instances : 0}"

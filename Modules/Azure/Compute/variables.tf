@@ -133,3 +133,9 @@ variable "boot_diagnostics_sa_type" {
    description = "(Optional) Storage account type for boot diagnostics"
    default = "Standard_LRS"
 }
+
+variable "DSC_Node_Configuration" {
+  type = "string"
+  description = "Set to the DSC Configuration you want to assign to the VMs"
+  default = "FileResource.locahost"
+}
